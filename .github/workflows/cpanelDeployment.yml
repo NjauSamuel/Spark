@@ -20,7 +20,7 @@ jobs:
       - name: Set up PHP and Composer
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2' # Match your app's PHP version
+          php-version: '8.4' # Required by Symfony packages in composer.lock
           tools: composer
 
       # Step 3: Install PHP dependencies (including tightenco/ziggy)
