@@ -33,7 +33,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '21' # Match the required Node.js version
+          node-version: '22.12' # Vite 7 requires Node.js 20.19+ or 22.12+
           
       - name: Install Node.js dependencies
         run: npm install
