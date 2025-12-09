@@ -1,59 +1,265 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Mini Operations CRM - Demo Project
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Overview
 
-## About Laravel
+This is a **Mini Operations CRM** built with Laravel, Inertia.js, and Vue 3. It demonstrates internal tooling capabilities including dashboard design, CRM functionality, task management, and trigger-based automations.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Tech Stack
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Backend**: Laravel 12
+- **Frontend**: Vue 3 with Inertia.js
+- **Styling**: Tailwind CSS + Flowbite
+- **Database**: SQLite (can be configured for MySQL/PostgreSQL)
+- **Authentication**: Laravel Breeze
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Features Implemented
 
-## Learning Laravel
+### 1. Dashboard
+- Real-time statistics showing:
+  - Total contacts count
+  - Total tasks count
+  - Pending tasks count
+  - Completed tasks count
+- Recent activity feed displaying:
+  - Latest 5 contacts
+  - Latest 5 tasks with associated contacts
+- Quick navigation links to Contacts and Tasks modules
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 2. Contacts Module (CRM)
+Full CRUD operations for managing contacts:
+- **Create**: Add new contacts with name, email, and status
+- **Read**: List all contacts with search and filter capabilities
+- **Update**: Edit contact information
+- **Delete**: Remove contacts
+- **Search**: Filter by name or email
+- **Status Filter**: Filter by status (new, active, lost)
+- **Pagination**: Efficient handling of large contact lists
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+**Contact Fields:**
+- Name (required)
+- Email (required, validated)
+- Status (new, active, lost)
 
-## Laravel Sponsors
+### 3. Tasks Module
+Full CRUD operations for managing tasks linked to contacts:
+- **Create**: Add tasks with title, due date, status, and associated contact
+- **Read**: List all tasks with filtering options
+- **Update**: Edit task details
+- **Delete**: Remove tasks
+- **Contact Filter**: Filter tasks by associated contact
+- **Status Filter**: Filter by status (pending, in_progress, completed)
+- **Search**: Search tasks by title
+- **Pagination**: Efficient handling of large task lists
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+**Task Fields:**
+- Title (required)
+- Contact (required, dropdown selection)
+- Due Date (required, date picker)
+- Status (pending, in_progress, completed)
 
-### Premium Partners
+### 4. Trigger-Based Automation
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+The system includes a webhook-based automation system that triggers when contacts are created or updated.
 
-## Contributing
+#### How It Works
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+1. **Events**: When a contact is created or updated, Laravel fires an event:
+   - `ContactCreated` - Fired when a new contact is created
+   - `ContactUpdated` - Fired when an existing contact is updated
 
-## Code of Conduct
+2. **Listener**: The `SendContactWebhook` listener catches these events and calls the `WebhookService`.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+3. **Webhook Service**: The service sends an HTTP POST request to a configured webhook URL with the contact data.
 
-## Security Vulnerabilities
+#### Webhook Payload
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```json
+{
+  "event": "contact.created" | "contact.updated",
+  "contact": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john@example.com",
+    "status": "active",
+    "created_at": "2024-01-01T12:00:00Z",
+    "updated_at": "2024-01-01T12:00:00Z"
+  },
+  "timestamp": "2024-01-01T12:00:00Z"
+}
+```
+
+#### Configuration
+
+Add the webhook URL to your `.env` file:
+
+```env
+WEBHOOK_URL=https://your-webhook-endpoint.com/api/webhook
+```
+
+If no webhook URL is configured, the system will log the event but skip the HTTP call (graceful degradation).
+
+#### Logging
+
+All webhook attempts are logged to `storage/logs/laravel.log`:
+- Successful webhook calls include status code
+- Failed webhook calls include error messages
+- Events without webhook URL configuration are logged as info
+
+#### Use Cases
+
+This automation system can be used to:
+- Integrate with external CRM systems
+- Send notifications to Slack/Discord
+- Trigger email campaigns
+- Sync data with third-party services
+- Implement Zapier-like integrations
+
+## API Integration Summary
+
+The webhook system demonstrates API integration capabilities:
+
+1. **Outbound API Calls**: Uses Laravel's HTTP client to send POST requests
+2. **Error Handling**: Gracefully handles failures without breaking the main workflow
+3. **Logging**: Comprehensive logging for debugging and monitoring
+4. **Configuration**: Environment-based configuration for flexibility
+5. **Event-Driven**: Decoupled architecture using Laravel events
+
+## Setup Instructions
+
+### Prerequisites
+
+- PHP 8.2 or higher
+- Composer
+- Node.js and npm
+- SQLite (or MySQL/PostgreSQL)
+
+### Installation
+
+1. **Clone the repository** (if applicable) or navigate to the project directory
+
+2. **Install PHP dependencies**:
+   ```bash
+   composer install
+   ```
+
+3. **Install JavaScript dependencies**:
+   ```bash
+   npm install
+   ```
+
+4. **Set up environment**:
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+5. **Configure database** (if using SQLite, ensure `database/database.sqlite` exists):
+   ```bash
+   touch database/database.sqlite
+   ```
+
+6. **Run migrations**:
+   ```bash
+   php artisan migrate
+   ```
+
+7. **Build frontend assets**:
+   ```bash
+   npm run build
+   ```
+
+8. **Start the development server**:
+   ```bash
+   php artisan serve
+   ```
+
+   In another terminal, start Vite:
+   ```bash
+   npm run dev
+   ```
+
+9. **Create a user account**:
+   - Visit `http://localhost:8000/register`
+   - Create your account
+   - Log in and start using the CRM
+
+### Optional: Configure Webhook
+
+To enable webhook automation:
+
+1. Add to `.env`:
+   ```env
+   WEBHOOK_URL=https://your-webhook-endpoint.com/api/webhook
+   ```
+
+2. Test by creating or updating a contact - check `storage/logs/laravel.log` for webhook activity
+
+## Project Structure
+
+```
+app/
+├── Events/
+│   ├── ContactCreated.php
+│   └── ContactUpdated.php
+├── Http/
+│   ├── Controllers/
+│   │   ├── ContactController.php
+│   │   ├── DashboardController.php
+│   │   └── TaskController.php
+│   └── Requests/
+│       ├── StoreContactRequest.php
+│       ├── UpdateContactRequest.php
+│       ├── StoreTaskRequest.php
+│       └── UpdateTaskRequest.php
+├── Listeners/
+│   └── SendContactWebhook.php
+├── Models/
+│   ├── Contact.php
+│   ├── Task.php
+│   └── User.php
+├── Providers/
+│   └── AppServiceProvider.php
+└── Services/
+    └── WebhookService.php
+
+resources/js/
+├── Pages/
+│   ├── Contacts/
+│   │   ├── Index.vue
+│   │   ├── Create.vue
+│   │   └── Edit.vue
+│   ├── Tasks/
+│   │   ├── Index.vue
+│   │   ├── Create.vue
+│   │   └── Edit.vue
+│   └── Dashboard.vue
+└── Layouts/
+    └── AuthenticatedLayout.vue
+
+database/migrations/
+├── create_contacts_table.php
+└── create_tasks_table.php
+```
+
+## Key Design Decisions
+
+1. **User Scoping**: All contacts and tasks are scoped to the authenticated user for data isolation
+2. **Event-Driven Architecture**: Webhooks are triggered via events for loose coupling
+3. **Graceful Degradation**: Webhook failures don't break contact creation/updates
+4. **Responsive Design**: Mobile-friendly interface using Tailwind CSS
+5. **Form Validation**: Server-side validation with Inertia.js form helpers for client-side feedback
+
+## Future Enhancements (Not Implemented)
+
+- Email notifications
+- Task reminders
+- Contact import/export (CSV)
+- Advanced reporting and analytics
+- Multi-user collaboration features
+- Activity timeline
+- Custom fields for contacts and tasks
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This is a demo project for MVP purposes.
+
