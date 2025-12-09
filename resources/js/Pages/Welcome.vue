@@ -1,5 +1,5 @@
 <script setup>
-import { Head } from '@inertiajs/vue3'
+import { Head, Link, usePage } from '@inertiajs/vue3'
 import MainLayout from '@/Layouts/MainLayout.vue'
 
 defineProps({
@@ -18,6 +18,9 @@ defineProps({
         required: true,
     },
 })
+
+const page = usePage()
+const isAuthenticated = !!page.props.auth?.user
 
 function handleImageError() {
     document.getElementById('screenshot-container')?.classList.add('!hidden')
@@ -130,11 +133,11 @@ function handleImageError() {
                     <p class="mb-6 font-light text-gray-500 md:text-lg dark:text-gray-400">
                         Spark helps you connect with friends and communities of people who share your interests. Connecting with your friends and family as well as discovering new ones is easy with features like Groups.
                     </p>
-                    <a
-                        href="#"
+                    <Link
+                        :href="route('dashboard')"
                         class="inline-flex items-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-primary-900"
                     >
-                        Get started
+                        {{ isAuthenticated ? 'Go to Dashboard' : 'Get started' }}
                         <svg
                             class="ml-2 -mr-1 w-5 h-5"
                             fill="currentColor"
@@ -147,7 +150,7 @@ function handleImageError() {
                                 clip-rule="evenodd"
                             ></path>
                         </svg>
-                    </a>
+                    </Link>
                 </div>
             </div>
         </section>

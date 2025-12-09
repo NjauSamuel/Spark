@@ -1,6 +1,6 @@
 <script setup>
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3'
-import { onMounted, computed, watch } from 'vue'
+import { onMounted, computed, watch, ref } from 'vue'
 import { initFlowbite } from 'flowbite'
 import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
@@ -19,6 +19,17 @@ defineProps({
 const page = usePage()
 const currentRoute = computed(() => page.url)
 const toast = useToast()
+const isDarkMode = ref(false)
+
+// Computed property for logo source based on dark mode
+const logoSource = computed(() => {
+    return isDarkMode.value ? '/images/SparkDark.png' : '/images/Spark.png'
+})
+
+// Function to check dark mode state
+const checkDarkMode = () => {
+    isDarkMode.value = document.documentElement.classList.contains('dark')
+}
 
 // Watch for flash messages and show toast notifications
 watch(
@@ -80,6 +91,9 @@ const isActive = (path) => {
 onMounted(() => {
     initFlowbite()
 
+    // Check initial dark mode state
+    checkDarkMode()
+
     const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon')
     const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon')
     const themeToggleBtn = document.getElementById('theme-toggle')
@@ -118,6 +132,19 @@ onMounted(() => {
                 localStorage.setItem('color-theme', 'dark')
             }
         }
+        
+        // Update dark mode state after toggle
+        checkDarkMode()
+    })
+
+    // Watch for dark mode changes via MutationObserver
+    const observer = new MutationObserver(() => {
+        checkDarkMode()
+    })
+
+    observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class']
     })
 })
 
@@ -136,7 +163,7 @@ const currentYear = new Date().getFullYear()
             <div class="max-w-7xl flex flex-wrap items-center justify-between mx-auto p-4">
                 <!-- Logo -->
                 <Link href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
-                    <img class="w-24 h-16 mr-2" src="/images/Spark.png" alt="Spark logo" />
+                    <img class="w-24 h-16 mr-2" :src="logoSource" alt="Spark logo" />
                 </Link>
 
                 <!-- Right Side -->
