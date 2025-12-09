@@ -40,12 +40,12 @@ function handleImageError() {
                     <h1
                         class="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-white"
                     >
-                        Building digital products & brands.
+                        Spark CRM - Manage your contacts, track tasks, and automate workflows.
                     </h1>
                     <p
                         class="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400"
                     >
-                        Here at Spark we focus on markets where technology, innovation, and capital can unlock long-term value and drive economic growth.
+                        Spark is a lightweight CRM that helps you manage contacts, track tasks, and automate workflows. Built for small teams and operations, it combines contact management with task tracking in one simple, powerful tool.
                     </p>
                     <form action="#" class="">
                         <div class="flex items-center mb-3">
@@ -128,10 +128,10 @@ function handleImageError() {
                     <h2
                         class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
                     >
-                        Let's create more tools and ideas that brings us together.
+                        Join Spark CRM and streamline your operations.
                     </h2>
                     <p class="mb-6 font-light text-gray-500 md:text-lg dark:text-gray-400">
-                        Spark helps you connect with friends and communities of people who share your interests. Connecting with your friends and family as well as discovering new ones is easy with features like Groups.
+                        Manage your contacts, track tasks linked to them, and automate workflows with webhook integrations. Spark's intuitive dashboard gives you real-time insights into your operations, making it easy to stay organized and productive.
                     </p>
                     <Link
                         :href="route('dashboard')"
