@@ -1,5 +1,6 @@
 <script setup>
     import { Head, Link, useForm } from '@inertiajs/vue3'
+    import { ref, computed, onMounted } from 'vue'
 
     defineProps({
         canResetPassword: Boolean,
@@ -17,6 +18,33 @@
             onFinish: () => form.reset('password'),
         })
     }
+
+    const isDarkMode = ref(false)
+
+    // Computed property for logo source based on dark mode
+    const logoSource = computed(() => {
+        return isDarkMode.value ? '/images/SparkDark.png' : '/images/Spark.png'
+    })
+
+    // Function to check dark mode state
+    const checkDarkMode = () => {
+        isDarkMode.value = document.documentElement.classList.contains('dark')
+    }
+
+    // Initialize dark mode check on mount
+    onMounted(() => {
+        checkDarkMode()
+
+        // Watch for dark mode changes via MutationObserver
+        const observer = new MutationObserver(() => {
+            checkDarkMode()
+        })
+
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['class']
+        })
+    })
 </script>
 
 <template>
@@ -33,7 +61,7 @@
             >
                 <img
                     class="w-24 h-16 mr-2"
-                    src="/images/Spark.png"
+                    :src="logoSource"
                     alt="Spark logo"
                 />
             </Link>
