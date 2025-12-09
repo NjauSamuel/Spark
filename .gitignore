@@ -22,3 +22,12 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Cursor AI files
+.cursor/
+*.cursor
+.cursorignore
+.cursor/mcp.json
+
+# Claude documentation
+CLAUDE.md
