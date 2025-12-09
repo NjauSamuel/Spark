@@ -1,7 +1,9 @@
 <script setup>
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3'
-import { onMounted, computed } from 'vue'
+import { onMounted, computed, watch } from 'vue'
 import { initFlowbite } from 'flowbite'
+import Toast from 'primevue/toast'
+import { useToast } from 'primevue/usetoast'
 
 defineProps({
     canLogin: {
@@ -16,6 +18,55 @@ defineProps({
 
 const page = usePage()
 const currentRoute = computed(() => page.url)
+const toast = useToast()
+
+// Watch for flash messages and show toast notifications
+watch(
+    () => page.props.flash,
+    (flash) => {
+        if (flash?.message) {
+            toast.add({
+                severity: 'info',
+                summary: 'Message',
+                detail: flash.message,
+                life: 3000,
+            })
+        }
+        if (flash?.success) {
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: flash.success,
+                life: 3000,
+            })
+        }
+        if (flash?.error) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: flash.error,
+                life: 5000,
+            })
+        }
+        if (flash?.warning) {
+            toast.add({
+                severity: 'warn',
+                summary: 'Warning',
+                detail: flash.warning,
+                life: 4000,
+            })
+        }
+        if (flash?.info) {
+            toast.add({
+                severity: 'info',
+                summary: 'Info',
+                detail: flash.info,
+                life: 3000,
+            })
+        }
+    },
+    { deep: true, immediate: true }
+)
 
 // Check if a route is active
 const isActive = (path) => {
@@ -233,6 +284,9 @@ const currentYear = new Date().getFullYear()
 
         <!-- Main Content -->
         <main class="flex-grow relative">
+            <!-- Toast Component -->
+            <Toast />
+            
             <!-- Theme Toggle Button -->
             <button
                 id="theme-toggle"
